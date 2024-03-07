@@ -5,13 +5,16 @@ namespace App\Livewire;
 use App\Models\Todo;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class TodoList extends Component
 {
-    #[Validate('required|min:3|max:50')]
-    public string $name;
+    use WithPagination;
 
-    public string $search;
+    #[Validate('required|min:3|max:50')]
+    public string $name = '';
+
+    public string $search = '';
 
     public function create()
     {
@@ -27,6 +30,8 @@ class TodoList extends Component
     }
     public function render()
     {
-        return view('livewire.todo-list');
+        $todos = Todo::latest()->where('name', 'like', "%{$this->search}%")->paginate(5);
+
+        return view('livewire.todo-list', ['todos' => $todos]);
     }
 }
