@@ -8,12 +8,15 @@ use Livewire\Component;
 
 class TodoList extends Component
 {
-    #[Validate('required|min:3|max:150')]
+    #[Validate('required|min:3|max:50')]
     public string $name;
+
+    public string $search;
 
     public function create()
     {
-        $validated = $this->validate();
+        $validated = $this->validateOnly('name');
+        
         Todo::create([
             'name' => $validated['name']
         ]);
