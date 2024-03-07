@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Todo;
+use Illuminate\View\View;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -16,7 +17,7 @@ class TodoList extends Component
 
     public string $search = '';
 
-    public function create()
+    public function create(): void
     {
         $validated = $this->validateOnly('name');
         
@@ -28,7 +29,13 @@ class TodoList extends Component
 
         request()->session()->flash('success', 'The todo was created!');
     }
-    public function render()
+
+    public function delete(int $todoId): void
+    {
+        Todo::find($todoId)->delete();
+    }
+
+    public function render(): View
     {
         $todos = Todo::latest()->where('name', 'like', "%{$this->search}%")->paginate(5);
 
