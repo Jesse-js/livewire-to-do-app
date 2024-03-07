@@ -3,10 +3,12 @@
 namespace App\Livewire;
 
 use App\Models\Todo;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Exception;
 
 class TodoList extends Component
 {
@@ -32,11 +34,19 @@ class TodoList extends Component
         $this->reset();
 
         request()->session()->flash('success', 'The todo was created!');
+
+        $this->resetPage();
     }
 
     public function delete(int $todoId): void
     {
-        Todo::find($todoId)->delete();
+        try {
+            Todo::findOrFail($todoId)->delete();
+        } catch (Exception $e) {
+            request()->session()->flash('error', 'The todo could not be deleted!');
+            Log::error('Error on delete Todo:'. $e->getMessage());
+            return;
+        }
     }
 
     public function toggle(int $todoId): void
