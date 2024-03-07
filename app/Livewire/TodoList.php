@@ -20,7 +20,7 @@ class TodoList extends Component
     public function create(): void
     {
         $validated = $this->validateOnly('name');
-        
+
         Todo::create([
             'name' => $validated['name']
         ]);
@@ -33,6 +33,13 @@ class TodoList extends Component
     public function delete(int $todoId): void
     {
         Todo::find($todoId)->delete();
+    }
+
+    public function toggle(int $todoId): void
+    {
+        $todo = Todo::findOrFail($todoId);
+        $todo->completed = !$todo->completed;
+        $todo->save();
     }
 
     public function render(): View
